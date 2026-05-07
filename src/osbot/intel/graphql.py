@@ -107,7 +107,7 @@ class GraphQLClient:
         if data is None:
             logger.warning("repo_profile_empty", owner=owner, name=name)
             return {}
-        return data
+        return dict(data)
 
     async def issue_detail(self, owner: str, name: str, number: int) -> dict[str, Any]:
         result = await self._gh.graphql(ISSUE_DETAIL_QUERY, {"owner": owner, "name": name, "number": str(number)})
@@ -115,11 +115,11 @@ class GraphQLClient:
         if data is None:
             logger.warning("issue_detail_empty", owner=owner, name=name, number=number)
             return {}
-        return data
+        return dict(data)
 
     async def pr_comments(self, owner: str, name: str, number: int) -> dict[str, Any]:
         result = await self._gh.graphql(PR_COMMENTS_QUERY, {"owner": owner, "name": name, "number": str(number)})
         data = result.get("data", {}).get("repository", {}).get("pullRequest")
         if data is None:
             return {}
-        return data
+        return dict(data)

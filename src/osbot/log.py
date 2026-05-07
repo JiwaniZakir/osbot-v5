@@ -21,7 +21,7 @@ def get_logger(name: str) -> structlog.stdlib.BoundLogger:
             cache_logger_on_first_use=True,
         )
         _configured = True
-    return structlog.get_logger(name)
+    return structlog.get_logger(name)  # type: ignore[no-any-return]
 
 
 def _is_tty() -> bool:

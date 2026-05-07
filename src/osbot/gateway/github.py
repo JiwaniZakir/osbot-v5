@@ -48,7 +48,8 @@ class GitHubCLI:
             logger.error("graphql_error", stderr=result.stderr[:200])
             return {}
         try:
-            return json.loads(result.stdout)
+            parsed: dict[str, Any] = json.loads(result.stdout)
+            return parsed
         except json.JSONDecodeError:
             logger.error("graphql_json_error", stdout=result.stdout[:200])
             return {}

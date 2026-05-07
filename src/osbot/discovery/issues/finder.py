@@ -29,7 +29,7 @@ async def find_issues(
 
     all_issues: list[ScoredIssue] = []
     for result in results:
-        if isinstance(result, Exception):
+        if isinstance(result, BaseException):
             logger.warning("issue_fetch_error", error=str(result))
             continue
         all_issues.extend(result)

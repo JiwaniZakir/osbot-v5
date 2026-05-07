@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings
@@ -37,7 +38,7 @@ class Settings(BaseSettings):
     timezone: str = "US/Eastern"
 
     allowed_languages: list[str] = Field(default=["Python", "TypeScript"])
-    interest_areas: list[dict] = Field(
+    interest_areas: list[dict[str, Any]] = Field(
         default=[
             {
                 "name": "ai-agents",
