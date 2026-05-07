@@ -1,0 +1,48 @@
+name: PR Review Gate
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+jobs:
+  pr-quality:
+    name: PR Quality Gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Check diff size
+        run: |
+          DIFF_LINES=$(git diff --stat origin/main...HEAD | tail -1 | grep -oP '\d+(?= insertion)' || echo 0)
+          DEL_LINES=$(git diff --stat origin/main...HEAD | tail -1 | grep -oP '\d+(?= deletion)' || echo 0)
+          TOTAL=$((DIFF_LINES + DEL_LINES))
+          echo "Total changed lines: $TOTAL"
+          if [ "$TOTAL" -gt 500 ]; then
+            echo "::warning::Large PR - $TOTAL lines changed. Consider splitting."
+          fi
+
+      - name: Run tests
+        run: pytest --cov=src/osbot --cov-report=term-missing -x
+
+      - name: Lint
+        run: |
+          ruff check src/ tests/
+          ruff format --check src/ tests/
+
+      - name: Type check
+        run: mypy src/osbot/ --ignore-missing-imports
