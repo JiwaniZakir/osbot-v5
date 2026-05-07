@@ -1,5 +1,5 @@
 .env
-state/
+/state/
 workspaces/
 *.pyc
 __pycache__/
